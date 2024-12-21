@@ -1,0 +1,8 @@
+---
+name: Run Docker
+description: Run container after building from Dockerfile
+author: lesleyk
+
+runs:
+  using: docker
+  image: ../../../lint/Dockerfile

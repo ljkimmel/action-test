@@ -1,0 +1,48 @@
+name: groovy-lint
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      lint-level:
+        type: choice
+        description: What level to fail Groovy linting on
+        default: error
+        options:
+          - error
+          - warning
+          - info
+          - none
+      log-level:
+        type: choice
+        description: Which level to show in summary
+        default: warning
+        options:
+          - error
+          - warning
+          - info
+
+jobs:
+  run-groovy-lint:
+    runs-on:
+      - ubuntu-latest
+    steps:
+      - name: Checkout Jenkins Libraries
+        id: checkout-main
+        uses: actions/checkout@v4
+
+      - name: Checkout npm-groovy-lint Code
+        id: checkout-lint
+        uses: actions/checkout@v4
+        with:
+          repository: nvuillam/npm-groovy-lint
+          ref: v15.0.0
+          path: lint
+
+      - name: Run Groovy Linter
+        id: run-docker
+        uses: ./.github/actions/docker-run
+        with:
+          args: >-
+            --failon ${{ inputs.lint-level || 'error' }} --no-insight 
+            --loglevel ${{ inputs.log-level || 'warning' }} -i lint/**"
